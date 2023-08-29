@@ -1,5 +1,9 @@
 let factory = {
     buildPart: function(type, model, action) {
+        if (model === null) {
+            return null;
+        }
+
         return {
             type: type,
             model: model,
@@ -8,27 +12,62 @@ let factory = {
             }
         };
     },
+
+    distribution_of_abilities: function(ability) {
+        if (ability === 'headlight') {
+            return 'Светит на 100 метров';
+        } else if (ability === 'barrel') {
+            return 'Что-то делает';
+        } else if (ability === 'pincers') {
+            return 'Что-то делает';
+        } else if (ability === 'tracks') {
+            return 'Преодолевает сложные барьеры';
+        } else {
+            return null;
+        }
+    },
+    createPart: function(partType, model) {
+        if (model === null) {
+            return null;
+        }
+
+        const action = this.distribution_of_abilities(model);
+
+        if (action === null) {
+            console.log(`Запчасть с моделью ${model} не может быть создана`);
+            return null;
+        }
+
+        return this.buildPart(partType, model, action);
+    },
+    buildHead: function(model) {
+        return this.createPart('head', model);
+    },
+    buildBody: function(model) {
+        return this.createPart('body', model);
+    },
+    buildArms: function(model) {
+        return this.createPart('arms', model);
+    },
+    buildLegs: function(model) {
+        return this.createPart('legs', model);
+    },
     build: function(parts) {
         let robot = {};
-        for (let part in parts) {
-            let action = null;
-            if (part === 'head') {
-                action = 'Светит на 100 метров';
-            } else if (part === 'body') {
-                action = 'Корпус делает что-то';
-            } else if (part === 'arms') {
-                action = 'Руки делают что-то';
-            } else if (part === 'legs') {
-                action = 'Ноги делают что-то';
-            }
+        let partActions = {};
 
-            if (action !== null) {
-                robot[part] = this.buildPart(part, parts[part], action);
-                robot[robot[part].model] = robot[part].action;
+        for (let part in parts) {
+            const createdPart = this.createPart(part, parts[part]);
+
+            if (createdPart !== null) {
+                robot[part] = createdPart;
+                partActions[robot[part].model] = robot[part].action;
             }
         }
+
+        Object.assign(robot, partActions);
         return robot;
-    }
+    },
 };
 
 let robot = factory.build({
