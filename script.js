@@ -27,13 +27,10 @@ let factory = {
         }
     },
     createPart: function(partType, model) {
+        const action = this.distribution_of_abilities(model);
         if (model === null) {
             return null;
-        }
-
-        const action = this.distribution_of_abilities(model);
-
-        if (action === null) {
+        } else if (action === null) {
             console.log(`Запчасть с моделью ${model} не может быть создана`);
             return null;
         }
@@ -70,22 +67,9 @@ let factory = {
     },
 };
 
-let robot = factory.build({
 
-    head: "headlight",
+let part = factory.buildLegs('headlight')
 
-    body: "barrel",
+console.log(part)
 
-    arms: "pincers",
-
-    legs: "tracks"
-
-});
-
-console.log(robot)
-
-console.log(robot.head)
-
-robot.headlight()
-
-robot.tracks()
+part.action()
